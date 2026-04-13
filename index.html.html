@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate - Shree Sambava Nathar Digambar Jain Trust</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#FBF5E6;color:#1E0F05;min-height:100vh}
+.hdr{background:linear-gradient(160deg,#6B1010 0%,#9B6010 55%,#6B1010 100%);padding:20px 16px;text-align:center}
+.hdr h1{font-family:'Cinzel',serif;color:#F0C040;font-size:clamp(12px,3.5vw,17px);letter-spacing:1.5px;line-height:1.5}
+.hdr p{color:rgba(255,255,255,.7);font-size:11px;margin-top:5px;letter-spacing:1px}
+.stepbar{background:#fff;border-bottom:2px solid #EDD98A;display:flex;justify-content:center;align-items:center;padding:12px;gap:4px;position:sticky;top:0;z-index:10}
+.si{display:flex;align-items:center;gap:5px}
+.sd{width:30px;height:30px;border-radius:50%;background:#E5D5B5;color:#aaa;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;transition:all .3s;flex-shrink:0}
+.si.active .sd{background:#C8501A;color:#fff;box-shadow:0 0 0 3px #FFD09040}
+.si.done .sd{background:#1B5E20;color:#fff}
+.sl{font-size:11px;font-weight:700;color:#bbb}
+.si.active .sl{color:#C8501A}
+.si.done .sl{color:#1B5E20}
+.scon{width:26px;height:2px;background:#E5D5B5}
+.scon.done{background:#1B5E20}
+.wrap{max-width:460px;margin:0 auto;padding:20px 14px 40px}
+.card{background:#fff;border-radius:18px;padding:24px 20px;box-shadow:0 4px 24px rgba(100,50,0,.1);border:1px solid #EDD98A}
+.ctitle{font-family:'Cinzel',serif;color:#5C3317;font-size:15px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #F5E8C0}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:#5C3317;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{width:100%;padding:11px 13px;border:2px solid #E8D5A8;border-radius:10px;font-family:'Nunito',sans-serif;font-size:15px;color:#1E0F05;background:#FDFAF4;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:#B8860B;background:#fff}
+.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:9px}
+.preset{padding:8px 4px;border:2px solid #E8D5A8;border-radius:8px;background:#FDFAF4;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:#5C3317;transition:all .2s}
+.preset:hover{border-color:#C8501A;color:#C8501A}
+.preset.on{border-color:#C8501A;background:#C8501A;color:#fff}
+.ptoggle{display:flex;gap:10px}
+.popt{flex:1;padding:12px 8px;border:2px solid #E8D5A8;border-radius:10px;background:#FDFAF4;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#5C3317;text-align:center;transition:all .2s}
+.popt .ico{font-size:20px;display:block;margin-bottom:3px}
+.popt.on{border-color:#C8501A;background:#C8501A;color:#fff}
+.btn-gold{width:100%;padding:14px;background:linear-gradient(135deg,#C8501A,#C8920A);color:#fff;border:none;border-radius:12px;font-family:'Cinzel',serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;margin-top:6px}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,130,10,.4)}
+.btn-out{width:100%;padding:12px;background:#fff;color:#C8501A;border:2px solid #C8501A;border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px}
+.btn-ghost{width:100%;padding:11px;background:#fff;color:#999;border:2px solid #ddd;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
+.qr-amt{background:linear-gradient(135deg,#FFF8E8,#FFF0CC);border:2px solid #B8860B;border-radius:14px;padding:14px 20px;text-align:center;margin-bottom:16px}
+.al{font-size:12px;color:#5C3317;font-weight:600}
+.av{font-family:'Cinzel',serif;font-size:34px;color:#C8501A;font-weight:700}
+.au{font-size:11px;color:#999;margin-top:3px}
+.qrwrap{display:flex;flex-direction:column;align-items:center;margin:6px 0 16px}
+.qrframe{background:#fff;border:3px solid #B8860B;border-radius:14px;padding:14px;box-shadow:0 4px 16px rgba(184,134,11,.2);margin:6px 0}
+.how{background:#F1FBF2;border-left:4px solid #43A047;border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:13px;line-height:2;color:#2E6030}
+.upzone{border:2px dashed #D4B060;border-radius:12px;padding:20px;text-align:center;background:#FFFDF5;cursor:pointer;position:relative;transition:all .2s}
+.upzone:hover{border-color:#C8501A}
+.upzone.has{border-color:#43A047;background:#F1FBF2;border-style:solid}
+.upzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uico{font-size:32px;margin-bottom:8px}
+.utxt{font-size:13px;color:#888;font-weight:600}
+.uhint{font-size:11px;color:#bbb;margin-top:4px}
+.ssprev{margin-top:10px;border-radius:10px;overflow:hidden;border:2px solid #43A047;display:none}
+.ssprev img{width:100%;display:block;max-height:180px;object-fit:cover}
+.sslab{background:#43A047;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;text-align:center}
+.vbadge{display:inline-flex;align-items:center;gap:6px;background:#E8F5E9;border:1.5px solid #43A047;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:#1B5E20;margin-top:8px}
+.cashbox{background:#E3F2FD;border-radius:12px;padding:14px;text-align:center;margin-bottom:14px}
+.prevbox{border:2px dashed #D4B060;border-radius:12px;padding:16px;background:#FFFDF5;margin:12px 0}
+.prevbox h4{font-family:'Cinzel',serif;text-align:center;font-size:13px;color:#5C3317;margin-bottom:12px}
+.pr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #EAD890;font-size:13px}
+.pr:last-child{border:none}
+.pk{color:#999;font-weight:600}
+.pv{color:#1E0F05;font-weight:700;max-width:55%;text-align:right;word-break:break-all}
+.sicon{font-size:62px;text-align:center;margin:10px 0 4px;animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.rcptbox{background:linear-gradient(135deg,#FFF8E8,#FFF0CC);border:2px solid #B8860B;border-radius:12px;padding:14px;text-align:center;margin:14px 0}
+.rl{font-size:12px;color:#5C3317;font-weight:600}
+.rv{font-family:'Cinzel',serif;font-size:20px;color:#1E0F05;font-weight:700}
+.bless{background:#FFF8E8;border-radius:10px;padding:12px;text-align:center;font-size:13px;color:#8B6010;margin-top:14px}
+.estatus{margin:12px 0;border-radius:12px;overflow:hidden;border:1.5px solid #E0D0A0}
+.esrow{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:13px;font-weight:600;background:#FFFDF5}
+.eico{font-size:18px;flex-shrink:0}
+.etxt{flex:1;text-align:left}
+.ebadge{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:700}
+.esending{background:#FFF8DC;color:#8B6010}
+.esent{background:#E8F5E9;color:#1B5E20}
+.eerror{background:#FFEBEE;color:#B71C1C}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;animation:spin 1s linear infinite}
+.sc{display:none}
+.sc.active{display:block}
+hr{border:none;border-top:1px solid #F0E0C0;margin:14px 0}
+.footer{text-align:center;padding:16px;font-size:11px;color:#bbb}
+.adm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;overflow-y:auto}
+.adm-overlay.open{display:block}
+.adm-panel{background:#FAFAF8;min-height:100vh;max-width:900px;margin:0 auto;padding:0 0 40px}
+.adm-hdr{background:linear-gradient(135deg,#1A237E,#283593);padding:18px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+.adm-hdr h2{font-family:'Cinzel',serif;font-size:16px}
+.adm-close{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.adm-body{padding:20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.scard{background:#fff;border-radius:12px;padding:14px;border:1px solid #E0D0A0;text-align:center}
+.sval{font-family:'Cinzel',serif;font-size:22px;color:#C8501A;font-weight:700}
+.slbl{font-size:11px;color:#999;font-weight:600;margin-top:3px}
+.adm-tb{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.adm-search{flex:1;min-width:160px;padding:9px 12px;border:2px solid #E0D0A0;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;outline:none}
+.btn-csv{padding:9px 16px;background:#1565C0;color:#fff;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.btn-del{padding:9px 16px;background:#C62828;color:#fff;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.dlist{display:flex;flex-direction:column;gap:10px}
+.dcard{background:#fff;border-radius:12px;border:1px solid #E8D5A8;overflow:hidden;cursor:pointer;transition:box-shadow .2s}
+.dcard:hover{box-shadow:0 4px 16px rgba(100,50,0,.12)}
+.dc-top{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.dc-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.dc-ico.upi{background:#E8F5E9}
+.dc-ico.cash{background:#E3F2FD}
+.dc-info{flex:1;min-width:0}
+.dc-name{font-weight:700;font-size:14px}
+.dc-meta{font-size:11px;color:#aaa;margin-top:2px}
+.dc-amt{font-family:'Cinzel',serif;font-size:16px;color:#C8501A;font-weight:700;flex-shrink:0}
+.dc-det{display:none;padding:0 14px 14px;border-top:1px dashed #E8D5A8}
+.dc-det.open{display:block}
+.dr{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px dashed #F5EDD0}
+.dr:last-child{border:none}
+.dk{color:#aaa;font-weight:600}
+.dv{color:#1E0F05;font-weight:700;text-align:right}
+.dc-ss{margin-top:10px;border-radius:8px;overflow:hidden;border:1.5px solid #43A047}
+.dc-ss img{width:100%;max-height:160px;object-fit:cover;display:block}
+.dc-ssl{background:#43A047;color:#fff;font-size:10px;font-weight:700;padding:3px 8px}
+.nodata{text-align:center;padding:40px 20px;color:#bbb;font-size:14px}
+.gate{max-width:340px;margin:80px auto;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,.2);text-align:center}
+.gate h3{font-family:'Cinzel',serif;color:#1E0F05;margin-bottom:16px}
+.gate input{width:100%;padding:12px;border:2px solid #E0D0A0;border-radius:10px;font-size:16px;outline:none;margin-bottom:12px;text-align:center;font-family:'Nunito',sans-serif;letter-spacing:3px}
+.perr{font-size:12px;color:#f44336;margin-top:8px;min-height:18px}
+@media(max-width:380px){.presets{grid-template-columns:repeat(2,1fr)}.sl{display:none}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div style="font-size:30px;margin-bottom:6px">🕉️</div>
+  <h1>SHREE SAMBAVA NATHAR<br>DIGAMBAR JAIN TRUST</h1>
+  <p>SECURE ONLINE DONATION</p>
+</div>
+
+<div class="stepbar">
+  <div class="si active" id="si1"><div class="sd">1</div><span class="sl">Details</span></div>
+  <div class="scon" id="sc1"></div>
+  <div class="si" id="si2"><div class="sd">2</div><span class="sl">Pay</span></div>
+  <div class="scon" id="sc2"></div>
+  <div class="si" id="si3"><div class="sd">3</div><span class="sl">Confirm</span></div>
+  <div class="scon" id="sc3"></div>
+  <div class="si" id="si4"><div class="sd">4</div><span class="sl">Receipt</span></div>
+</div>
+
+<div class="wrap">
+
+<!-- STEP 1 -->
+<div class="sc active" id="s1">
+  <div class="card">
+    <div class="ctitle">📋 Donor Details</div>
+    <div class="field"><label>Full Name *</label><input id="fn" type="text" placeholder="Enter your full name"></div>
+    <div class="field"><label>Phone Number *</label><input id="fp" type="tel" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric"></div>
+    <div class="field"><label>Email Address *</label><input id="fe" type="email" placeholder="yourname@email.com"></div>
+    <div class="field">
+      <label>Donation Amount (₹) *</label>
+      <div class="presets">
+        <button class="preset" onclick="setAmt(101,this)">₹101</button>
+        <button class="preset" onclick="setAmt(251,this)">₹251</button>
+        <button class="preset" onclick="setAmt(501,this)">₹501</button>
+        <button class="preset" onclick="setAmt(1001,this)">₹1001</button>
+        <button class="preset" onclick="setAmt(1100,this)">₹1100</button>
+        <button class="preset" onclick="setAmt(2100,this)">₹2100</button>
+        <button class="preset" onclick="setAmt(5100,this)">₹5100</button>
+        <button class="preset" onclick="setAmt(11000,this)">₹11K</button>
+      </div>
+      <input id="fa" type="number" placeholder="Or enter custom amount" min="1" oninput="clearPresets()">
+    </div>
+    <div class="field">
+      <label>Purpose</label>
+      <select id="fpu">
+        <option>General Donation</option><option>Temple Maintenance</option>
+        <option>Puja &amp; Rituals</option><option>Festival Celebration</option>
+        <option>Charitable Activities</option><option>Educational Support</option>
+        <option>Annadanam / Food Donation</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Payment Method *</label>
+      <div class="ptoggle">
+        <button class="popt on" id="pupi" onclick="setPay('upi',this)"><span class="ico">📱</span>UPI / QR</button>
+        <button class="popt" id="pcash" onclick="setPay('cash',this)"><span class="ico">💵</span>Cash</button>
+      </div>
+    </div>
+    <button class="btn-gold" id="s1btn" onclick="s1next()">Proceed to Payment 🙏</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="sc" id="s2">
+  <div class="card">
+    <div class="ctitle">📱 Scan &amp; Pay via UPI</div>
+    <div class="qr-amt">
+      <div class="al">Donation Amount</div>
+      <div class="av" id="qamt">₹0</div>
+      <div class="au">UPI: shreesambava47@fbl</div>
+    </div>
+    <div class="qrwrap">
+      <p style="font-size:12px;color:#aaa;text-align:center">Scan with GPay · PhonePe · Paytm</p>
+      <div class="qrframe"><div id="qrcode"></div></div>
+      <p style="font-size:12px;color:#aaa">🔒 100% Secure UPI Payment</p>
+    </div>
+    <div class="how">
+      <strong>How to pay:</strong><br>
+      1️⃣ Open GPay / PhonePe / Paytm<br>
+      2️⃣ Tap "Scan QR Code"<br>
+      3️⃣ Scan the code above<br>
+      4️⃣ Verify amount &amp; pay<br>
+      5️⃣ <strong>Note your Transaction ID</strong>
+    </div>
+    <button class="btn-gold" onclick="s2next()">I Have Paid ✓</button>
+    <button class="btn-out" onclick="goStep(1)">← Go Back</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="sc" id="s3">
+  <div class="card">
+    <div class="ctitle" id="s3title">✅ Confirm Payment</div>
+
+    <div id="upifields">
+      <div class="field">
+        <label>UPI Transaction ID *</label>
+        <input id="ftxn" type="text" placeholder="e.g. 412345678901" style="text-transform:uppercase;letter-spacing:1px;font-weight:700">
+        <p style="font-size:11px;color:#bbb;margin-top:4px">Find in your UPI app → Payment History</p>
+      </div>
+      <div class="field">
+        <label>Payment Screenshot * <span style="color:#43A047;font-size:10px">(Proof of Payment)</span></label>
+        <div class="upzone" id="upzone">
+          <input type="file" id="fss" accept="image/*" onchange="previewSS(this)">
+          <div class="uico">📸</div>
+          <div class="utxt">Tap to upload payment screenshot</div>
+          <div class="uhint">JPG · PNG · From GPay / PhonePe / Paytm</div>
+        </div>
+        <div class="ssprev" id="ssprev">
+          <div class="sslab">✅ Screenshot Uploaded</div>
+          <img id="ssimg" src="" alt="screenshot">
+        </div>
+        <div id="ssbadge" style="display:none;text-align:center;margin-top:8px">
+          <span class="vbadge">✅ Proof of Payment Attached</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="cashfields" style="display:none">
+      <div class="cashbox">
+        <div style="font-size:28px">💵</div>
+        <div style="font-weight:700;color:#1565C0;margin-top:4px">Cash Collection Entry</div>
+        <div style="font-size:12px;color:#555;margin-top:4px">Enter the name of the staff who collected the cash</div>
+      </div>
+      <div class="field"><label>Received By (Staff Name) *</label><input id="frb" type="text" placeholder="Staff member name"></div>
+      <div class="field"><label>Notes (Optional)</label><input id="fnotes" type="text" placeholder="Any additional notes..."></div>
+    </div>
+
+    <div class="prevbox">
+      <h4>🏛️ Receipt Preview</h4>
+      <div class="pr"><span class="pk">Donor Name</span><span class="pv" id="pname">—</span></div>
+      <div class="pr"><span class="pk">Phone</span><span class="pv" id="pphone">—</span></div>
+      <div class="pr"><span class="pk">Email</span><span class="pv" id="pemail">—</span></div>
+      <div class="pr"><span class="pk">Amount</span><span class="pv" id="pamt">—</span></div>
+      <div class="pr"><span class="pk">Purpose</span><span class="pv" id="ppurpose">—</span></div>
+      <div class="pr"><span class="pk">Date &amp; Time</span><span class="pv" id="pdate">—</span></div>
+    </div>
+
+    <button class="btn-gold" onclick="s3next()">Generate Receipt 📄</button>
+    <button class="btn-out" id="s3back" onclick="goStep(2)">← Go Back</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="sc" id="s4">
+  <div class="card" style="text-align:center">
+    <div class="sicon">✅</div>
+    <div class="ctitle" id="s4title" style="border:none;margin-bottom:6px;display:block;text-align:center">Payment Successful!</div>
+    <p style="font-size:13px;color:#777;line-height:1.6">Thank you for your generous donation to<br><strong>Shree Sambava Nathar Digambar Jain Trust</strong></p>
+    <div class="rcptbox">
+      <div class="rl">Receipt Number</div>
+      <div class="rv" id="rcptno">—</div>
+    </div>
+    <div class="estatus">
+      <div class="esrow">
+        <span class="eico">🏛️</span>
+        <span class="etxt">Receipt copy to Trust email</span>
+        <span class="ebadge esending" id="emailbadge"><span class="spin">⏳</span> Sending</span>
+      </div>
+      <div class="esrow" style="border-top:1px solid #F0E4C0">
+        <span class="eico">💬</span>
+        <span class="etxt">WhatsApp notification to Trust</span>
+        <span class="ebadge esending" id="wabadge"><span class="spin">⏳</span> Sending</span>
+      </div>
+    </div>
+    <hr>
+    <button class="btn-gold" onclick="dlPDF()">📥 Download Receipt PDF</button>
+    <button class="btn-out" onclick="printR()">🖨️ Print Receipt</button>
+    <button class="btn-ghost" onclick="resetAll()">+ New Donation</button>
+    <div class="bless">🙏 May Lord Mahavir bless you and your family</div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  🕉️ SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST<br>
+  Secured by UPI · Receipts issued digitally<br>
+  <a href="#" onclick="openAdmin();return false" style="color:#B8860B;font-weight:700;font-size:12px;text-decoration:none;display:inline-block;margin-top:6px">⚙️ Admin Panel</a>
+</div>
+
+<div class="adm-overlay" id="admoverlay">
+  <div id="gatewrap">
+    <div class="gate">
+      <div style="font-size:36px;margin-bottom:8px">🔐</div>
+      <h3>Admin Access</h3>
+      <p style="font-size:13px;color:#999;margin-bottom:16px">Enter password to view all donations</p>
+      <input type="password" id="apwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')chkPwd()">
+      <button class="btn-gold" onclick="chkPwd()" style="margin-top:0">Enter</button>
+      <button class="btn-ghost" onclick="closeAdmin()">Cancel</button>
+      <div class="perr" id="perr"></div>
+    </div>
+  </div>
+  <div id="adminpanel" style="display:none">
+    <div class="adm-panel">
+      <div class="adm-hdr">
+        <div><h2>📊 Admin Panel</h2><div style="font-size:11px;opacity:.7;margin-top:2px">SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST</div></div>
+        <button class="adm-close" onclick="closeAdmin()">✕ Close</button>
+      </div>
+      <div class="adm-body">
+        <div class="stats">
+          <div class="scard"><div class="sval" id="stat1">0</div><div class="slbl">Total Donations</div></div>
+          <div class="scard"><div class="sval" id="stat2">₹0</div><div class="slbl">Total Amount</div></div>
+          <div class="scard"><div class="sval" id="stat3">0</div><div class="slbl">Today</div></div>
+        </div>
+        <div class="adm-tb">
+          <input class="adm-search" id="asearch" placeholder="🔍 Search name, phone, receipt..." oninput="renderList()">
+          <button class="btn-csv" onclick="exportCSV()">📥 Export CSV</button>
+          <button class="btn-del" onclick="clearAll()">🗑️ Clear All</button>
+        </div>
+        <div class="dlist" id="dlist"><div class="nodata">No donations recorded yet</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TRUST      = "SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST";
+const UPI_ID     = "shreesambava47@fbl";
+const TRUST_MAIL = "shreesambavanathardigambarjain@gmail.com";
+const ADMIN_PASS = "SSN@2024";
+const EJS = { publicKey:"eh560WzbSNQZPnR7_", serviceId:"service_8lfph49", templateId:"template_1t5ptu9" };
+
+/* ── WhatsApp (UltraMsg) ── */
+const WA = { instance:"instance169835", token:"n7g8ukz8ge67k8du", phone1:"+917598626356", phone2:"+919843070988" };
+
+let D={}, RNO='', PAY='upi';
+
+function g(id){ return document.getElementById(id); }
+function fmtINR(n){ return '₹'+Number(n).toLocaleString('en-IN'); }
+function mkRNO(){
+  const d=new Date();
+  return 'SSN-'+String(d.getFullYear()).slice(-2)+String(d.getMonth()+1).padStart(2,'0')+'-'+Math.floor(1000+Math.random()*9000);
+}
+function numWords(n){
+  const o=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const t=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  if(!n) return 'Zero';
+  function c(x){
+    if(x<20) return o[x];
+    if(x<100) return t[Math.floor(x/10)]+(x%10?' '+o[x%10]:'');
+    if(x<1000) return o[Math.floor(x/100)]+' Hundred'+(x%100?' '+c(x%100):'');
+    if(x<100000) return c(Math.floor(x/1000))+' Thousand'+(x%1000?' '+c(x%1000):'');
+    if(x<10000000) return c(Math.floor(x/100000))+' Lakh'+(x%100000?' '+c(x%100000):'');
+    return c(Math.floor(x/10000000))+' Crore'+(x%10000000?' '+c(x%10000000):'');
+  }
+  return c(Math.floor(n))+' Rupees Only';
+}
+function fmtD(d,lng){
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:lng?'long':'short',year:'numeric'})
+    +' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+
+function goStep(n){
+  document.querySelectorAll('.sc').forEach((el,i)=>el.classList.toggle('active',i+1===n));
+  [1,2,3,4].forEach(i=>{
+    const si=g('si'+i); si.classList.remove('active','done');
+    if(i===n) si.classList.add('active'); else if(i<n) si.classList.add('done');
+    const sc=g('sc'+i); if(sc) sc.classList.toggle('done',i<n);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setAmt(v,btn){ g('fa').value=v; clearPresets(); btn.classList.add('on'); }
+function clearPresets(){ document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on')); }
+function setPay(type,btn){
+  PAY=type;
+  document.querySelectorAll('.popt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  g('s1btn').textContent=type==='cash'?'Generate Cash Receipt 💵':'Proceed to Payment 🙏';
+}
+
+function s1next(){
+  const name=g('fn').value.trim(), phone=g('fp').value.trim(),
+        email=g('fe').value.trim(), amount=parseFloat(g('fa').value), purpose=g('fpu').value;
+  if(!name){ alert('Please enter your full name.'); return; }
+  if(!/^\d{10}$/.test(phone)){ alert('Please enter a valid 10-digit phone number.'); return; }
+  if(!email.includes('@')){ alert('Please enter a valid email address.'); return; }
+  if(!amount||amount<1){ alert('Please enter a valid donation amount.'); return; }
+  D={name,phone,email,amount,purpose,payType:PAY,date:new Date()};
+  RNO=mkRNO();
+  fillPrev();
+  if(PAY==='cash'){
+    g('s3title').textContent='💵 Cash Donation Entry';
+    g('upifields').style.display='none';
+    g('cashfields').style.display='block';
+    g('s3back').onclick=()=>goStep(1);
+    goStep(3);
+  } else {
+    g('s3title').textContent='✅ Confirm Payment';
+    g('upifields').style.display='block';
+    g('cashfields').style.display='none';
+    g('s3back').onclick=()=>goStep(2);
+    g('qamt').textContent=fmtINR(amount);
+    const lnk='upi://pay?pa='+UPI_ID+'&pn='+encodeURIComponent(TRUST)+'&am='+amount+'&cu=INR&tn='+encodeURIComponent(purpose);
+    g('qrcode').innerHTML='';
+    new QRCode(g('qrcode'),{text:lnk,width:220,height:220,colorDark:'#1E0F05',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+    goStep(2);
+  }
+}
+
+function s2next(){ fillPrev(); goStep(3); }
+
+function fillPrev(){
+  g('pname').textContent=D.name||'—';
+  g('pphone').textContent=D.phone||'—';
+  g('pemail').textContent=D.email||'—';
+  g('pamt').textContent=D.amount?fmtINR(D.amount):'—';
+  g('ppurpose').textContent=D.purpose||'—';
+  g('pdate').textContent=D.date?fmtD(D.date,false):'—';
+}
+
+function previewSS(input){
+  if(!input.files||!input.files[0]) return;
+  const file=input.files[0];
+  const reader=new FileReader();
+  reader.onload=e=>{
+    D.screenshot=e.target.result;
+    g('ssimg').src=e.target.result;
+    g('ssprev').style.display='block';
+    g('ssbadge').style.display='block';
+    g('upzone').classList.add('has');
+    g('upzone').querySelector('.uico').textContent='✅';
+    g('upzone').querySelector('.utxt').textContent=file.name;
+    g('upzone').querySelector('.uhint').textContent='Tap to change';
+  };
+  reader.readAsDataURL(file);
+}
+
+function s3next(){
+  if(PAY==='upi'){
+    const txn=g('ftxn').value.trim();
+    if(!txn){ alert('Please enter your UPI Transaction ID.'); return; }
+    if(!D.screenshot){ alert('Please upload your payment screenshot.'); return; }
+    D.txn=txn.toUpperCase(); D.payMethod='UPI';
+  } else {
+    const rb=g('frb').value.trim();
+    if(!rb){ alert('Please enter the staff name who received the cash.'); return; }
+    D.txn='CASH'; D.receivedBy=rb; D.cashNotes=g('fnotes').value.trim(); D.payMethod='Cash';
+  }
+  g('rcptno').textContent=RNO;
+  g('s4title').textContent=PAY==='cash'?'💵 Cash Receipt Generated!':'✅ Payment Successful!';
+  g('emailbadge').className='ebadge esending';
+  g('emailbadge').innerHTML='<span class="spin">⏳</span> Sending';
+  g('wabadge').className='ebadge esending';
+  g('wabadge').innerHTML='<span class="spin">⏳</span> Sending';
+  saveDonation();
+  goStep(4);
+  sendEmail();
+  sendWhatsApp();
+}
+
+function saveDonation(){
+  const rec={rcptNo:RNO,payType:D.payMethod,name:D.name,phone:D.phone,email:D.email,
+    amount:D.amount,purpose:D.purpose,txn:D.txn,date:D.date.toISOString(),
+    receivedBy:D.receivedBy||'',cashNotes:D.cashNotes||'',screenshot:D.screenshot||''};
+  const list=JSON.parse(localStorage.getItem('ssn_donations')||'[]');
+  list.unshift(rec);
+  localStorage.setItem('ssn_donations',JSON.stringify(list));
+}
+
+function sendEmail(){
+  if(EJS.publicKey==='YOUR_PUBLIC_KEY'){
+    g('emailbadge').className='ebadge eerror'; g('emailbadge').textContent='⚙️ Setup needed'; return;
+  }
+  emailjs.init({publicKey:EJS.publicKey});
+  const msgBody=
+    '🕉️ NEW DONATION RECEIVED\n\n'+
+    'Receipt No: '+RNO+'\n'+
+    'Date: '+fmtD(D.date,true)+'\n\n'+
+    'DONOR DETAILS:\n'+
+    'Name: '+D.name+'\n'+
+    'Phone: '+D.phone+'\n'+
+    'Email: '+D.email+'\n'+
+    'Purpose: '+D.purpose+'\n'+
+    'Payment: '+D.payMethod+'\n'+
+    (D.payMethod==='Cash'?'Received By: '+D.receivedBy:'TXN ID: '+D.txn)+'\n\n'+
+    'AMOUNT: '+fmtINR(D.amount)+'\n'+
+    'In Words: '+numWords(D.amount)+'\n\n'+
+    'May Lord Mahavir bless the donor! 🙏';
+  // Send to Trust
+  emailjs.send(EJS.serviceId,EJS.templateId,{
+    name:TRUST, email:TRUST_MAIL, title:'New Donation - '+RNO, message:msgBody
+  });
+  // Send to Donor
+  emailjs.send(EJS.serviceId,EJS.templateId,{
+    name:D.name, email:D.email, title:'🕉️ Donation Receipt - '+RNO, message:msgBody
+  }).then(()=>{
+    g('emailbadge').className='ebadge esent'; g('emailbadge').textContent='✅ Sent';
+  }).catch(()=>{
+    g('emailbadge').className='ebadge eerror'; g('emailbadge').textContent='❌ Failed';
+  });
+}
+
+function sendWhatsApp(){
+  const msg=
+    '🕉️ *New Donation Received!*\n\n'+
+    '🏛️ *'+TRUST+'*\n'+
+    '━━━━━━━━━━━━━━\n'+
+    '👤 *Name:* '+D.name+'\n'+
+    '📱 *Phone:* '+D.phone+'\n'+
+    '💰 *Amount:* '+fmtINR(D.amount)+'\n'+
+    '🎯 *Purpose:* '+D.purpose+'\n'+
+    '💳 *Payment:* '+D.payMethod+'\n'+
+    (D.payMethod==='Cash'?'👨 *Received By:* '+D.receivedBy:'🔑 *TXN ID:* '+D.txn)+'\n'+
+    '🧾 *Receipt No:* '+RNO+'\n'+
+    '📅 *Date:* '+fmtD(D.date,false)+'\n'+
+    '━━━━━━━━━━━━━━\n'+
+    '🙏 May Lord Mahavir bless the donor!';
+  const url='https://api.ultramsg.com/'+WA.instance+'/messages/chat';
+  function sendTo(phone, isLast){
+    fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'token='+encodeURIComponent(WA.token)+'&to='+encodeURIComponent(phone)+'&body='+encodeURIComponent(msg)+'&priority=10'
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      if(isLast){
+        if(data.sent==='true'||data.sent===true){
+          g('wabadge').className='ebadge esent'; g('wabadge').textContent='✅ Sent';
+        } else {
+          g('wabadge').className='ebadge eerror'; g('wabadge').textContent='❌ Failed';
+          console.log('UltraMsg response:',data);
+        }
+      }
+    })
+    .catch(err=>{ 
+      if(isLast){ g('wabadge').className='ebadge eerror'; g('wabadge').textContent='❌ Failed'; }
+      console.log('WA error:',err);
+    });
+  }
+  sendTo(WA.phone1, false);
+  sendTo(WA.phone2, false);
+  sendTo('+91'+D.phone, true);
+}
+
+function dlPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const pg={w:210,h:297};
+  const d=D.date;
+  const ds=d.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const aw=numWords(D.amount);
+  doc.setDrawColor(184,134,11); doc.setLineWidth(1.5); doc.rect(8,8,pg.w-16,pg.h-16);
+  doc.setLineWidth(0.4); doc.rect(10,10,pg.w-20,pg.h-20);
+  doc.setFillColor(107,16,16); doc.rect(10,10,pg.w-20,36,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.text('OM  SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST',pg.w/2,24,{align:'center'});
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text('DONATION RECEIPT',pg.w/2,33,{align:'center'});
+  doc.setFontSize(8); doc.text(TRUST_MAIL,pg.w/2,40,{align:'center'});
+  doc.setDrawColor(184,134,11); doc.setLineWidth(1); doc.line(10,47,pg.w-10,47);
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(107,50,16);
+  doc.text('Receipt No: '+RNO,16,54);
+  doc.text('Date: '+ds+'   '+ts,pg.w-16,54,{align:'right'});
+  doc.setFillColor(255,248,230); doc.rect(14,58,pg.w-28,8,'F');
+  doc.setFontSize(9.5); doc.setFont('helvetica','bold'); doc.setTextColor(107,16,16);
+  doc.text('DONOR INFORMATION',18,64);
+  const rows=[['Donor Name',D.name],['Phone Number',D.phone],['Email Address',D.email],
+    ['Purpose',D.purpose],['Payment Method',D.payMethod],
+    D.payMethod==='Cash'?['Received By',D.receivedBy]:['UPI Transaction ID',D.txn]];
+  let y=76;
+  rows.forEach(([k,v])=>{
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(130,90,40);
+    doc.text(k+':',18,y); doc.setFont('helvetica','bold'); doc.setTextColor(30,15,5);
+    doc.text(String(v||''),75,y);
+    doc.setDrawColor(230,210,160); doc.setLineWidth(0.2); doc.line(14,y+3,pg.w-14,y+3);
+    y+=11;
+  });
+  y+=4;
+  doc.setDrawColor(184,134,11); doc.setFillColor(255,252,235); doc.setLineWidth(1.2);
+  doc.rect(14,y,pg.w-28,30,'FD');
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(107,16,16);
+  doc.text('DONATION AMOUNT',pg.w/2,y+9,{align:'center'});
+  doc.setFontSize(26); doc.setTextColor(200,80,26);
+  doc.text('Rs. '+Number(D.amount).toLocaleString('en-IN')+'/-',pg.w/2,y+22,{align:'center'});
+  y+=34;
+  doc.setFontSize(8.5); doc.setFont('helvetica','italic'); doc.setTextColor(100,70,20);
+  doc.text('In Words: '+aw,pg.w/2,y,{align:'center'});
+  y+=12;
+  doc.setFillColor(232,245,232); doc.rect(14,y,pg.w-28,18,'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(27,94,32);
+  doc.text('This acknowledges receipt of the above donation. Thank you for your generous support.',pg.w/2,y+7,{align:'center'});
+  doc.text('May Lord Mahavir bless you with health, happiness and prosperity.',pg.w/2,y+14,{align:'center'});
+  y+=28;
+  doc.setDrawColor(190,160,100); doc.setLineWidth(0.5);
+  doc.line(20,y+16,78,y+16); doc.line(132,y+16,190,y+16);
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(130);
+  doc.text("Donor's Signature",49,y+21,{align:'center'});
+  doc.text("Authorized Signatory",161,y+21,{align:'center'});
+  doc.setFontSize(7.5); doc.text(TRUST,161,y+26,{align:'center'});
+  doc.setFontSize(7.5); doc.setTextColor(170);
+  doc.text('Generated on '+ds+' | Receipt No: '+RNO,pg.w/2,pg.h-12,{align:'center'});
+  doc.save('Receipt_'+RNO+'.pdf');
+}
+
+function printR(){
+  const d=D.date;
+  const ds=d.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const txnRow=D.payMethod==='Cash'
+    ?'<tr><td>Received By</td><td>'+D.receivedBy+'</td></tr>'
+    :'<tr><td>UPI Transaction ID</td><td>'+D.txn+'</td></tr>';
+  const w=window.open('','_blank');
+  w.document.write('<html><head><title>Receipt '+RNO+'</title><style>body{font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:24px;border:2px solid #B8860B}.hdr{background:#6B1010;color:#fff;padding:18px;text-align:center}h2{font-size:15px;margin:4px 0}.sub{font-size:11px;opacity:.75;margin-top:4px}.meta{display:flex;justify-content:space-between;padding:10px 0;font-size:12px;border-bottom:2px solid #B8860B;margin-top:8px}table{width:100%;border-collapse:collapse;margin:14px 0}td{padding:7px 4px;font-size:13px;border-bottom:1px dashed #ddd}td:first-child{color:#888;width:40%;font-weight:600}td:last-child{font-weight:700}.abox{background:#FFF8E8;border:2px solid #B8860B;padding:14px;text-align:center;margin:14px 0;border-radius:8px}.abig{font-size:28px;font-weight:700;color:#C8501A}.ack{background:#E8F5E9;padding:10px;border-radius:6px;font-size:12px;color:#2E7D32;text-align:center;margin:12px 0}.sigs{display:flex;justify-content:space-between;margin-top:40px}.sigs div{text-align:center;font-size:11px;color:#666}.sigs hr{width:130px;margin:0 auto 4px}.foot{text-align:center;font-size:10px;color:#aaa;margin-top:20px;border-top:1px solid #eee;padding-top:10px}</style></head><body><div class="hdr"><div style="font-size:24px">🕉️</div><h2>'+TRUST+'</h2><div class="sub">DONATION RECEIPT</div></div><div class="meta"><span><b>Receipt No:</b> '+RNO+'</span><span><b>Date:</b> '+ds+' '+ts+'</span></div><table><tr><td>Donor Name</td><td>'+D.name+'</td></tr><tr><td>Phone</td><td>'+D.phone+'</td></tr><tr><td>Email</td><td>'+D.email+'</td></tr><tr><td>Purpose</td><td>'+D.purpose+'</td></tr><tr><td>Payment Method</td><td>'+D.payMethod+'</td></tr>'+txnRow+'</table><div class="abox"><div style="font-size:12px;color:#888;font-weight:600">DONATION AMOUNT</div><div class="abig">₹'+Number(D.amount).toLocaleString('en-IN')+'/-</div><div style="font-size:12px;color:#666;margin-top:4px">'+numWords(D.amount)+'</div></div><div class="ack">✅ Payment received with gratitude. May Lord Mahavir bless you. 🙏</div><div class="sigs"><div><hr><p>Donor\'s Signature</p></div><div><hr><p>Authorized Signatory</p><p style="font-size:10px">'+TRUST+'</p></div></div><div class="foot">'+TRUST_MAIL+' | Receipt No: '+RNO+'</div></body></html>');
+  w.document.close(); setTimeout(()=>w.print(),400);
+}
+
+function resetAll(){
+  D={}; RNO=''; PAY='upi';
+  ['fn','fp','fe','fa','ftxn','frb','fnotes'].forEach(id=>{const el=g(id);if(el)el.value='';});
+  g('fss').value='';
+  g('ssprev').style.display='none';
+  g('ssbadge').style.display='none';
+  g('upzone').classList.remove('has');
+  g('upzone').querySelector('.uico').textContent='📸';
+  g('upzone').querySelector('.utxt').textContent='Tap to upload payment screenshot';
+  g('upzone').querySelector('.uhint').textContent='JPG · PNG · From GPay / PhonePe / Paytm';
+  clearPresets(); g('fpu').selectedIndex=0;
+  document.querySelectorAll('.popt').forEach(b=>b.classList.remove('on'));
+  g('pupi').classList.add('on');
+  g('s1btn').textContent='Proceed to Payment 🙏';
+  goStep(1);
+}
+
+function openAdmin(){ g('admoverlay').classList.add('open'); g('gatewrap').style.display='block'; g('adminpanel').style.display='none'; g('apwd').value=''; g('perr').textContent=''; }
+function closeAdmin(){ g('admoverlay').classList.remove('open'); }
+function chkPwd(){
+  if(g('apwd').value===ADMIN_PASS){ g('gatewrap').style.display='none'; g('adminpanel').style.display='block'; loadAdmin(); }
+  else { g('perr').textContent='❌ Incorrect password'; }
+}
+function loadAdmin(){
+  const list=JSON.parse(localStorage.getItem('ssn_donations')||'[]');
+  const today=new Date().toDateString();
+  g('stat1').textContent=list.length;
+  g('stat2').textContent=fmtINR(list.reduce((s,d)=>s+(d.amount||0),0));
+  g('stat3').textContent=list.filter(d=>new Date(d.date).toDateString()===today).length;
+  renderList();
+}
+function renderList(){
+  const q=(g('asearch').value||'').toLowerCase();
+  const list=JSON.parse(localStorage.getItem('ssn_donations')||'[]');
+  const fil=list.filter(d=>!q||(d.name||'').toLowerCase().includes(q)||(d.phone||'').includes(q)||(d.rcptNo||'').toLowerCase().includes(q)||(d.purpose||'').toLowerCase().includes(q));
+  if(!fil.length){ g('dlist').innerHTML='<div class="nodata">🙏 No donations found</div>'; return; }
+  g('dlist').innerHTML=fil.map((d,i)=>{
+    const dt=new Date(d.date);
+    const ds=dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' '+dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    const isCash=d.payType==='Cash';
+    return '<div class="dcard" onclick="toggleD('+i+')"><div class="dc-top"><div class="dc-ico '+(isCash?'cash':'upi')+'">'+(isCash?'💵':'📱')+'</div><div class="dc-info"><div class="dc-name">'+d.name+'</div><div class="dc-meta">'+d.rcptNo+' · '+ds+'</div></div><div class="dc-amt">'+fmtINR(d.amount)+'</div></div><div class="dc-det" id="dd'+i+'"><div class="dr"><span class="dk">Phone</span><span class="dv">'+d.phone+'</span></div><div class="dr"><span class="dk">Email</span><span class="dv">'+d.email+'</span></div><div class="dr"><span class="dk">Purpose</span><span class="dv">'+d.purpose+'</span></div><div class="dr"><span class="dk">Payment</span><span class="dv">'+d.payType+(isCash?' · '+d.receivedBy:' · '+d.txn)+'</span></div>'+(d.cashNotes?'<div class="dr"><span class="dk">Notes</span><span class="dv">'+d.cashNotes+'</span></div>':'')+(d.screenshot?'<div class="dc-ss"><div class="dc-ssl">📸 Payment Screenshot</div><img src="'+d.screenshot+'"></div>':'')+'</div></div>';
+  }).join('');
+}
+function toggleD(i){ const el=g('dd'+i); el.classList.toggle('open'); }
+function exportCSV(){
+  const list=JSON.parse(localStorage.getItem('ssn_donations')||'[]');
+  if(!list.length){ alert('No donations to export.'); return; }
+  const hdr=['Receipt No','Date','Name','Phone','Email','Amount','Purpose','Payment Type','TXN/ReceivedBy','Notes'];
+  const rows=list.map(d=>[d.rcptNo,new Date(d.date).toLocaleDateString('en-IN'),d.name,d.phone,d.email,d.amount,d.purpose,d.payType,d.payType==='Cash'?d.receivedBy:d.txn,d.cashNotes||'']);
+  const csv=[hdr,...rows].map(r=>r.map(v=>'"'+v+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='SSN_Donations_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+function clearAll(){
+  if(confirm('Delete ALL donation records? This cannot be undone.')){
+    localStorage.removeItem('ssn_donations'); loadAdmin();
+  }
+}
+</script>
+</body>
+</html>
