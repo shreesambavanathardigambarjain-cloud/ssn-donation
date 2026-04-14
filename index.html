@@ -217,22 +217,18 @@ hr{border:none;border-top:1px solid #F0E0C0;margin:14px 0}
     </div>
     <div style="text-align:center;margin-bottom:12px;font-size:13px;font-weight:700;color:#5C3317">— Tap to pay directly —</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <a id="gpay-link" href="#" onclick="openUPI('gpay')" style="display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:#fff;border:2px solid #E8D5A8;border-radius:12px;text-decoration:none;transition:all .2s">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/120px-Google_Pay_Logo.svg.png" style="height:36px;object-fit:contain;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:#5C3317">Google Pay</span>
-      </a>
-      <a id="phonepe-link" href="#" onclick="openUPI('phonepe')" style="display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:#fff;border:2px solid #E8D5A8;border-radius:12px;text-decoration:none;transition:all .2s">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/120px-PhonePe_Logo.svg.png" style="height:36px;object-fit:contain;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:#5C3317">PhonePe</span>
-      </a>
-      <a id="paytm-link" href="#" onclick="openUPI('paytm')" style="display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:#fff;border:2px solid #E8D5A8;border-radius:12px;text-decoration:none;transition:all .2s">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/120px-Paytm_Logo_%28standalone%29.svg.png" style="height:36px;object-fit:contain;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:#5C3317">Paytm</span>
-      </a>
-      <a id="bhim-link" href="#" onclick="openUPI('bhim')" style="display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:#fff;border:2px solid #E8D5A8;border-radius:12px;text-decoration:none;transition:all .2s">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/BHIM_logo.svg/120px-BHIM_logo.svg.png" style="height:36px;object-fit:contain;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:#5C3317">BHIM</span>
-      </a>
+      <button onclick="openUPI('gpay')" style="padding:16px 8px;background:#fff;border:2px solid #4285F4;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#4285F4">
+        📱 Google Pay
+      </button>
+      <button onclick="openUPI('phonepe')" style="padding:16px 8px;background:#fff;border:2px solid #5F259F;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#5F259F">
+        📱 PhonePe
+      </button>
+      <button onclick="openUPI('paytm')" style="padding:16px 8px;background:#fff;border:2px solid #002970;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#002970">
+        📱 Paytm
+      </button>
+      <button onclick="openUPI('bhim')" style="padding:16px 8px;background:#fff;border:2px solid #00509F;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#00509F">
+        📱 BHIM UPI
+      </button>
     </div>
     <div class="how">
       1️⃣ Tap your preferred payment app above<br>
@@ -481,9 +477,6 @@ function s1next(){
     g('cashfields').style.display='none';
     g('s3back').onclick=()=>goStep(2);
     g('qamt').textContent=fmtINR(amount);
-    const lnk='upi://pay?pa='+UPI_ID+'&pn='+encodeURIComponent(TRUST)+'&am='+amount+'&cu=INR&tn='+encodeURIComponent(purpose);
-    g('qrcode').innerHTML='';
-    new QRCode(g('qrcode'),{text:lnk,width:220,height:220,colorDark:'#1E0F05',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
     goStep(2);
   }
 }
@@ -492,14 +485,17 @@ function openUPI(app){
   const amount=D.amount;
   const upiId=UPI_ID;
   const name=encodeURIComponent(TRUST);
-  const note=encodeURIComponent(D.purpose);
-  const upiLink='upi://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
-  let appLink=upiLink;
-  if(app==='gpay') appLink='gpay://upi/pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
-  else if(app==='phonepe') appLink='phonepe://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
-  else if(app==='paytm') appLink='paytmmp://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
-  else if(app==='bhim') appLink='upi://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
-  window.location.href=appLink;
+  const note=encodeURIComponent(D.purpose||'Donation');
+  const base='upi://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
+  let appLink=base;
+  if(app==='gpay') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end';
+  else if(app==='phonepe') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=com.phonepe.app;end';
+  else if(app==='paytm') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=net.one97.paytm;end';
+  else if(app==='bhim') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=in.org.npci.upiapp;end';
+  // Try app-specific link, fallback to generic UPI
+  const a=document.createElement('a');
+  a.href=appLink;
+  a.click();
 }
 function s2next(){ fillPrev(); goStep(3); }
 
