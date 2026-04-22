@@ -215,21 +215,10 @@ hr{border:none;border-top:1px solid #F0E0C0;margin:14px 0}
       <div style="font-size:11px;color:#999;margin-top:4px">Copy and pay in any UPI app</div>
       <button onclick="navigator.clipboard.writeText('shreesambava47@fbl').then(()=>this.textContent='✅ Copied!').catch(()=>{})" style="margin-top:8px;padding:6px 16px;background:#C8501A;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy UPI ID</button>
     </div>
-    <div style="text-align:center;margin-bottom:12px;font-size:13px;font-weight:700;color:#5C3317">— Tap to pay directly —</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <button onclick="openUPI('gpay')" style="padding:16px 8px;background:#fff;border:2px solid #4285F4;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#4285F4">
-        📱 Google Pay
-      </button>
-      <button onclick="openUPI('phonepe')" style="padding:16px 8px;background:#fff;border:2px solid #5F259F;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#5F259F">
-        📱 PhonePe
-      </button>
-      <button onclick="openUPI('paytm')" style="padding:16px 8px;background:#fff;border:2px solid #002970;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#002970">
-        📱 Paytm
-      </button>
-      <button onclick="openUPI('bhim')" style="padding:16px 8px;background:#fff;border:2px solid #00509F;border-radius:12px;cursor:pointer;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;color:#00509F">
-        📱 BHIM UPI
-      </button>
-    </div>
+    <button onclick="openUPI()" style="width:100%;padding:16px;background:linear-gradient(135deg,#1B5E20,#388E3C);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:Cinzel,serif;font-size:15px;font-weight:700;margin-bottom:14px">
+      📱 Open UPI App & Pay
+    </button>
+    <p style="text-align:center;font-size:12px;color:#888;margin-bottom:14px">Works with GPay · PhonePe · Paytm · BHIM & all UPI apps</p>
     <div class="how">
       1️⃣ Tap your preferred payment app above<br>
       2️⃣ Verify the amount &amp; UPI ID<br>
@@ -397,6 +386,15 @@ hr{border:none;border-top:1px solid #F0E0C0;margin:14px 0}
   </div>
 </div>
 
+<!-- Custom Alert Modal -->
+<div id="alertModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:24px;max-width:300px;margin:20px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">
+    <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+    <div id="alertMsg" style="font-size:14px;color:#1E0F05;font-weight:600;margin-bottom:16px;line-height:1.5"></div>
+    <button onclick="document.getElementById('alertModal').style.display='none'" style="padding:10px 30px;background:linear-gradient(135deg,#C8501A,#C8920A);color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-size:14px;font-weight:700;cursor:pointer">OK</button>
+  </div>
+</div>
+
 <script>
 const TRUST      = "SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST";
 const UPI_ID     = "shreesambava47@fbl";
@@ -410,6 +408,11 @@ const WA = { instance:"instance169835", token:"n7g8ukz8ge67k8du", phone1:"+91759
 let D={}, RNO='', PAY='upi';
 
 function g(id){ return document.getElementById(id); }
+function showAlert(msg){
+  const modal=document.getElementById('alertModal');
+  document.getElementById('alertMsg').textContent=msg;
+  modal.style.display='flex';
+}
 function fmtINR(n){ return '₹'+Number(n).toLocaleString('en-IN'); }
 function mkRNO(){
   const d=new Date();
@@ -457,11 +460,11 @@ function s1next(){
   const name=g('fn').value.trim(), phone=g('fp').value.trim(),
         email=g('fe').value.trim(), amount=parseFloat(g('fa').value), purpose=g('fpu').value,
         address=g('faddr').value.trim();
-  if(!name){ alert('Please enter your full name.'); return; }
-  if(!/^\d{10}$/.test(phone)){ alert('Please enter a valid 10-digit phone number.'); return; }
+  if(!name){ showAlert('Please enter your full name.'); return; }
+  if(!/^\d{10}$/.test(phone)){ showAlert('Please enter a valid 10-digit phone number.'); return; }
   if(!email.includes('@')){ alert('Please enter a valid email address.'); return; }
   if(!address){ alert('Please enter your address.'); return; }
-  if(!amount||amount<1){ alert('Please enter a valid donation amount.'); return; }
+  if(!amount||amount<1){ showAlert('Please enter a valid donation amount.'); return; }
   D={name,phone,email,address,amount,purpose,payType:PAY,date:new Date()};
   RNO=mkRNO();
   fillPrev();
@@ -486,16 +489,8 @@ function openUPI(app){
   const upiId=UPI_ID;
   const name=encodeURIComponent(TRUST);
   const note=encodeURIComponent(D.purpose||'Donation');
-  const base='upi://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
-  let appLink=base;
-  if(app==='gpay') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end';
-  else if(app==='phonepe') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=com.phonepe.app;end';
-  else if(app==='paytm') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=net.one97.paytm;end';
-  else if(app==='bhim') appLink='intent://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note+'#Intent;scheme=upi;package=in.org.npci.upiapp;end';
-  // Try app-specific link, fallback to generic UPI
-  const a=document.createElement('a');
-  a.href=appLink;
-  a.click();
+  const upiLink='upi://pay?pa='+upiId+'&pn='+name+'&am='+amount+'&cu=INR&tn='+note;
+  window.location.href=upiLink;
 }
 function s2next(){ fillPrev(); goStep(3); }
 
@@ -529,12 +524,12 @@ function previewSS(input){
 function s3next(){
   if(PAY==='upi'){
     const txn=g('ftxn').value.trim();
-    if(!txn){ alert('Please enter your UPI Transaction ID.'); return; }
-    if(!D.screenshot){ alert('Please upload your payment screenshot.'); return; }
+    if(!txn){ showAlert('Please enter your UPI Transaction ID.'); return; }
+    if(!D.screenshot){ showAlert('Please upload your payment screenshot.'); return; }
     D.txn=txn.toUpperCase(); D.payMethod='UPI';
   } else {
     const rb=g('frb').value.trim();
-    if(!rb){ alert('Please enter the staff name who received the cash.'); return; }
+    if(!rb){ showAlert('Please enter the staff name who received the cash.'); return; }
     D.txn='CASH'; D.receivedBy=rb; D.cashNotes=g('fnotes').value.trim(); D.payMethod='Cash';
   }
   g('rcptno').textContent=RNO;
@@ -646,7 +641,7 @@ function dlPDF(){
   doc.setLineWidth(0.4); doc.rect(10,10,pg.w-20,pg.h-20);
   doc.setFillColor(107,16,16); doc.rect(10,10,pg.w-20,36,'F');
   doc.setTextColor(255,255,255); doc.setFontSize(11); doc.setFont('helvetica','bold');
-  doc.text('OM  SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST',pg.w/2,24,{align:'center'});
+  doc.text('SHREE SAMBAVA NATHAR DIGAMBAR JAIN TRUST',pg.w/2,24,{align:'center'});
   doc.setFontSize(9); doc.setFont('helvetica','normal');
   doc.text('DONATION RECEIPT',pg.w/2,33,{align:'center'});
   doc.setFontSize(8); doc.text(TRUST_MAIL+' | Ph: 9443359656, 9843070988',pg.w/2,38,{align:'center'});
