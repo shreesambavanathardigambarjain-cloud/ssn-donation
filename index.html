@@ -187,40 +187,39 @@ hr{border:none;border-top:1px solid #F0E0C0;margin:14px 0}
     <div class="field">
       <label>Payment Method *</label>
       <div class="ptoggle">
-        <button class="popt on" id="pupi" onclick="setPay('upi',this)"><span class="ico">📱</span>UPI / QR</button>
-        <button class="popt" id="pcash" onclick="setPay('cash',this)"><span class="ico">💵</span>Cash</button>
+        <button class="popt on" id="pcash" onclick="setPay('cash',this)"><span class="ico">💵</span>Cash</button>
+        <button class="popt" id="pupi" onclick="setPay('upi',this)"><span class="ico">📱</span>UPI</button>
       </div>
     </div>
-    <button class="btn-gold" id="s1btn" onclick="s1next()">Proceed to Payment 🙏</button>
+    <button class="btn-gold" id="s1btn" onclick="s1next()">Proceed to Receipt 🧾</button>
   </div>
 </div>
 
 <!-- STEP 2 -->
 <div class="sc" id="s2">
   <div class="card">
-    <div class="ctitle">💳 Payment Details</div>
+    <div class="ctitle">🧾 Receipt Details</div>
 
-    <!-- Amount Display -->
     <div style="background:linear-gradient(135deg,#FFF8E8,#FFF0CC);border:2px solid #B8860B;border-radius:14px;padding:18px;text-align:center;margin-bottom:18px">
-      <div style="font-size:12px;color:#888;font-weight:700;letter-spacing:1px;margin-bottom:4px">DONATION AMOUNT</div>
+      <div style="font-size:11px;color:#888;font-weight:700;letter-spacing:1px;margin-bottom:4px">DONATION AMOUNT</div>
       <div class="av" id="qamt" style="font-size:32px">₹0</div>
-      <div id="s2paytype" style="font-size:12px;color:#5C3317;margin-top:4px;font-weight:600"></div>
+      <div id="s2paytype" style="font-size:12px;color:#5C3317;margin-top:6px;font-weight:700;background:rgba(0,0,0,.06);border-radius:20px;padding:3px 12px;display:inline-block"></div>
     </div>
 
     <!-- UPI Fields -->
     <div id="upi-fields" style="display:none">
       <div style="background:#E8F5E9;border:2px solid #2E7D32;border-radius:12px;padding:14px;margin-bottom:16px">
-        <div style="font-size:11px;color:#1B5E20;font-weight:700;margin-bottom:6px">📋 STEP 1 — Pay to this UPI ID</div>
-        <div style="font-size:16px;font-weight:700;color:#C8501A;letter-spacing:1px;margin-bottom:6px">shreesambava47@fbl</div>
+        <div style="font-size:11px;color:#1B5E20;font-weight:700;margin-bottom:6px">Trust UPI ID</div>
+        <div style="font-size:16px;font-weight:700;color:#C8501A;letter-spacing:1px;margin-bottom:8px">shreesambava47@fbl</div>
         <button onclick="navigator.clipboard.writeText('shreesambava47@fbl').then(()=>this.textContent='✅ Copied!').catch(()=>{})" style="padding:6px 14px;background:#2E7D32;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy UPI ID</button>
-        <div style="font-size:11px;color:#555;margin-top:8px">Open GPay / PhonePe / Paytm → Send Money → Paste UPI ID</div>
+        <div style="font-size:11px;color:#555;margin-top:8px">Pay via any UPI app → Enter TXN ID below</div>
       </div>
-      <div style="background:#E3F2FD;border:2px solid #1565C0;border-radius:12px;padding:12px;margin-bottom:16px">
-        <div style="font-size:11px;color:#0D47A1;font-weight:700;margin-bottom:6px">📝 STEP 2 — Enter Transaction ID</div>
-        <div style="font-size:11px;color:#555">After payment, find TXN ID in your UPI app payment history</div>
+      <div class="field">
+        <label>UPI Transaction ID *</label>
+        <input id="ftxn" type="text" placeholder="Enter TXN ID from your UPI app">
       </div>
-      <div class="field"><label>UPI Transaction ID *</label><input id="ftxn" type="text" placeholder="e.g. 123456789012" style="font-size:16px;letter-spacing:1px"></div>
-      <div class="field"><label>Payment Screenshot (optional)</label>
+      <div class="field">
+        <label>Payment Screenshot (optional)</label>
         <div class="upload-area" onclick="g('fss').click()">
           <div style="font-size:28px">📷</div>
           <div>Tap to upload screenshot</div>
@@ -231,15 +230,18 @@ hr{border:none;border-top:1px solid #F0E0C0;margin:14px 0}
     </div>
 
     <!-- Cash Fields -->
-    <div id="cash-fields" style="display:none">
+    <div id="cash-fields" style="display:block">
       <div style="background:#FFF3E0;border:2px solid #E65100;border-radius:12px;padding:14px;margin-bottom:16px">
         <div style="font-size:11px;color:#BF360C;font-weight:700;margin-bottom:4px">💵 CASH PAYMENT</div>
-        <div style="font-size:12px;color:#555">Please enter the name of the staff member who collected the cash donation</div>
+        <div style="font-size:12px;color:#555">Enter the name of the staff member who collected the cash</div>
       </div>
-      <div class="field"><label>Received By (Staff Name) *</label><input id="frb" type="text" placeholder="Enter staff member name"></div>
+      <div class="field">
+        <label>Received By (Staff Name) *</label>
+        <input id="frb" type="text" placeholder="Enter staff member name">
+      </div>
     </div>
 
-    <button class="btn-gold" onclick="s2next()" style="margin-top:8px">Generate Receipt 🧾</button>
+    <button class="btn-gold" onclick="s2next()">Generate Receipt 🧾</button>
     <button class="btn-out" onclick="goStep(1)">← Go Back</button>
   </div>
 </div>
@@ -383,7 +385,7 @@ const EJS = { publicKey:"eh560WzbSNQZPnR7_", serviceId:"service_8lfph49", templa
 /* ── WhatsApp (Fonnte) ── */
 const WA = { instance:"instance169835", token:"n7g8ukz8ge67k8du", phone1:"+917598626356", phone2:"+919843070988" };
 
-let D={}, RNO='', PAY='upi';
+let D={}, RNO='', PAY='cash';
 
 function g(id){ return document.getElementById(id); }
 function showAlert(msg){ const m=document.getElementById('alertModal'); if(m){ document.getElementById('alertMsg').textContent=msg; m.style.display='flex'; } else { alert(msg); } }
@@ -427,7 +429,7 @@ function setPay(type,btn){
   PAY=type;
   document.querySelectorAll('.popt').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  g('s1btn').textContent=type==='cash'?'Generate Cash Receipt 💵':'Proceed to Payment 🙏';
+  g('s1btn').textContent=type==='cash'?'Generate Cash Receipt 💵':'Proceed to Receipt 🧾';
 }
 
 function s1next(){
@@ -460,19 +462,13 @@ function s1next(){
 }
 
 function s2next(){
-  const isUPI2=(D.payType==='UPI'||D.payType==='upi');
-  if(isUPI2){
-    const txn=(g('ftxn')?g('ftxn').value.trim():'');
+  const isUPI=(PAY==='upi'||PAY==='UPI');
+  if(isUPI){
+    const txn=g('ftxn')?g('ftxn').value.trim():'';
     if(!txn){ showAlert('Please enter your UPI Transaction ID.'); return; }
-    D.txn=txn; D.payMethod='UPI'; D.receivedBy='';
-    const ss=g('fss');
-    if(ss&&ss.files&&ss.files[0]){
-      const reader=new FileReader();
-      reader.onload=e=>{ D.screenshot=e.target.result; };
-      reader.readAsDataURL(ss.files[0]);
-    }
-  } else if(!isUPI2) {
-    const rb=(g('frb')?g('frb').value.trim():'');
+    D.txn=txn; D.payMethod='UPI'; D.receivedBy='N/A';
+  } else {
+    const rb=g('frb')?g('frb').value.trim():'';
     if(!rb){ showAlert('Please enter the staff name who received the cash.'); return; }
     D.receivedBy=rb; D.payMethod='Cash'; D.txn='N/A';
   }
@@ -674,7 +670,7 @@ function resetAll(){
   clearPresets(); g('fpu').selectedIndex=0;
   document.querySelectorAll('.popt').forEach(b=>b.classList.remove('on'));
   g('pupi').classList.add('on');
-  g('s1btn').textContent='Proceed to Payment 🙏';
+  g('s1btn').textContent='Proceed to Receipt 🧾';
   goStep(1);
 }
 
